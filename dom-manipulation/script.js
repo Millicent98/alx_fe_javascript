@@ -54,11 +54,11 @@ function addQuote() {
   }
 }
 
+// (No need for a separate createAddQuoteForm function)
+
 newQuoteBtn.addEventListener("click", showRandomQuote);
 
-// Add Quote Button Event Listener
 const addQuoteButton = document.querySelector('button[onclick="addQuote()"]');
 addQuoteButton.addEventListener("click", addQuote);
 
-// Initial Quote Display
 showRandomQuote();
