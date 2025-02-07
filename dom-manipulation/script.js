@@ -1,30 +1,27 @@
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
+const exportQuotesBtn = document.getElementById("exportQuotes");
+const importFileInput = document.getElementById("importFile");
 
-let quotes = [
-  {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-    category: "Inspiration",
-  },
-  {
-    text: "Be yourself; everyone else is already taken.",
-    author: "Oscar Wilde",
-    category: "Inspiration",
-  },
-  {
-    text: "The future belongs to those who believe in the beauty of their dreams.",
-    author: "Eleanor Roosevelt",
-    category: "Inspiration",
-  },
-  {
-    text: "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart.",
-    author: "Helen Keller",
-    category: "Inspiration",
-  },
-];
+let quotes = [];
+
+function loadQuotesFromLocalStorage() {
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  }
+}
+
+function saveQuotesToLocalStorage() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
 
 function showRandomQuote() {
+  if (quotes.length === 0) {
+    quoteDisplay.innerHTML = "<p>No quotes available.</p>";
+    return;
+  }
+
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
 
@@ -47,6 +44,7 @@ function addQuote() {
     };
 
     quotes.push(newQuote);
+    saveQuotesToLocalStorage();
     showRandomQuote();
 
     document.getElementById("newQuoteText").value = "";
@@ -54,11 +52,39 @@ function addQuote() {
   }
 }
 
-// (No need for a separate createAddQuoteForm function)
+function exportQuotes() {
+  const data = JSON.stringify(quotes);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "quotes.json";
+  link.click();
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (event) {
+    try {
+      const importedQuotes = JSON.parse(event.target.result);
+      quotes.push(...importedQuotes);
+      saveQuotesToLocalStorage();
+      showRandomQuote();
+      alert("Quotes imported successfully!");
+    } catch (error) {
+      alert("Error importing quotes: " + error);
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// Load quotes from Local Storage on page load
+loadQuotesFromLocalStorage();
 
 newQuoteBtn.addEventListener("click", showRandomQuote);
-
-const addQuoteButton = document.querySelector('button[onclick="addQuote()"]');
-addQuoteButton.addEventListener("click", addQuote);
+document
+  .querySelector('button[onclick="addQuote()"]')
+  .addEventListener("click", addQuote);
+exportQuotesBtn.addEventListener("click", exportQuotes);
 
 showRandomQuote();
