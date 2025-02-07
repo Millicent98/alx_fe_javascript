@@ -28,23 +28,11 @@ function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
 
-  // Create elements dynamically
-  const quoteParagraph = document.createElement("p");
-  quoteParagraph.textContent = randomQuote.text;
-
-  const authorParagraph = document.createElement("p");
-  authorParagraph.textContent = `- ${randomQuote.author}`;
-
-  const categoryParagraph = document.createElement("p");
-  categoryParagraph.textContent = `Category: ${randomQuote.category}`;
-
-  // Clear existing content
-  quoteDisplay.innerHTML = "";
-
-  // Append elements to the quoteDisplay
-  quoteDisplay.appendChild(quoteParagraph);
-  quoteDisplay.appendChild(authorParagraph);
-  quoteDisplay.appendChild(categoryParagraph);
+  quoteDisplay.innerHTML = `
+    <p>${randomQuote.text}</p>
+    <p>- ${randomQuote.author}</p>
+    <p>Category: ${randomQuote.category}</p>
+  `;
 }
 
 function addQuote() {
@@ -65,6 +53,8 @@ function addQuote() {
     document.getElementById("newQuoteCategory").value = "";
   }
 }
+
+// (No need for a separate createAddQuoteForm function)
 
 newQuoteBtn.addEventListener("click", showRandomQuote);
 
